@@ -64,7 +64,7 @@ int main(int argc, char** argv){
 
         pcap_antenna(radiotap->Antenna_signal);
 
-        if(beacon->type == 0x0080 || beacon->type == 0x0850){
+        if(beacon->type == 0x0080){
             wrls = (struct Wireless*)(packet+radiotap->length+sizeof(struct Beacon));
             ESSID = packet + radiotap->length+sizeof(struct Beacon)+sizeof(struct Wireless);
             s_tag = (struct S_tag*)(packet + radiotap->length+sizeof(struct Beacon)+sizeof(struct Wireless)+wrls->ssid_len);
@@ -96,9 +96,9 @@ int main(int argc, char** argv){
             }
 
             //pwd
-            if(pcap_antenna(radiotap->Antenna_signal) >= 100) sprintf(packet_cp[cmp], "%s\t-%d \t%d\t%2x\t%s\n", bssid_c, pcap_antenna(radiotap->Antenna_signal), beacon_count[cmp], ds_tag->current_channel, essid_c_final);
-            else if(pcap_antenna(radiotap->Antenna_signal) < 100 && pcap_antenna(radiotap->Antenna_signal) >= 10 ) sprintf(packet_cp[cmp], "%s\t-%d  \t%d\t%2x\t%s\n", bssid_c, pcap_antenna(radiotap->Antenna_signal), beacon_count[cmp], ds_tag->current_channel, essid_c_final);
-            else if(pcap_antenna(radiotap->Antenna_signal) < 10) sprintf(packet_cp[cmp], "%s\t-%d   \t%d\t%2x\t%s\n", bssid_c, pcap_antenna(radiotap->Antenna_signal), beacon_count[cmp], ds_tag->current_channel, essid_c_final);
+            if(pcap_antenna(radiotap->Antenna_signal) >= 100) sprintf(packet_cp[cmp], "%s\t-%d \t%d\t%d\t%s\n", bssid_c, pcap_antenna(radiotap->Antenna_signal), beacon_count[cmp], ds_tag->current_channel, essid_c_final);
+            else if(pcap_antenna(radiotap->Antenna_signal) < 100 && pcap_antenna(radiotap->Antenna_signal) >= 10 ) sprintf(packet_cp[cmp], "%s\t-%d  \t%d\t%d\t%s\n", bssid_c, pcap_antenna(radiotap->Antenna_signal), beacon_count[cmp], ds_tag->current_channel, essid_c_final);
+            else if(pcap_antenna(radiotap->Antenna_signal) < 10) sprintf(packet_cp[cmp], "%s\t-%d   \t%d\t%d\t%s\n", bssid_c, pcap_antenna(radiotap->Antenna_signal), beacon_count[cmp], ds_tag->current_channel, essid_c_final);
             
             system("clear");
             puts("BSSID\t\t\tPWR  Beacons\tCH\tESSID\n");
