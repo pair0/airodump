@@ -25,10 +25,10 @@ int main(int argc, char** argv){
     struct Wireless* wrls;
     struct S_tag* s_tag;
     struct DS_tag* ds_tag;
-    char bssid_c[20];
-    char** packet_cp = (char**)calloc(300,sizeof(char*));
-    for(int i=0; i<20; i++){
-        packet_cp[i] = (char*)calloc(150,sizeof(char));
+    
+    char** packet_cp = (char**)calloc(100,sizeof(char*));
+    for(int i=0; i<100; i++){
+        packet_cp[i] = (char*)calloc(100,sizeof(char));
     }
     char essid_c[2];
     int count = 0;
@@ -48,7 +48,8 @@ int main(int argc, char** argv){
         const u_char* packet;
         const u_char* ESSID;
         const u_char* Supported_Rates;
-        char *essid_c_final = (char *)calloc(20, sizeof(char));
+        char *essid_c_final = (char *)calloc(30, sizeof(char));
+        char *bssid_c = (char *)calloc(20, sizeof(char));
 
         int cmp = -1;
         int res = pcap_next_ex(pcap, &header, &packet);
@@ -104,6 +105,8 @@ int main(int argc, char** argv){
             for (int i=0; i<count; i++){
                 printf("%s", packet_cp[i]);
             }
+            free(essid_c_final);
+            free(bssid_c);
         }
         
         else{ //Probe Request일 시
@@ -112,6 +115,7 @@ int main(int argc, char** argv){
     }
     printf("\n\n%d\n\n", count);
     printf("\n\n");
+    free(packet_cp);
 
     pcap_close(pcap);
 }
