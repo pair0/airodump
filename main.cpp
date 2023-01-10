@@ -15,9 +15,8 @@ u_int8_t pcap_antenna(u_int8_t antenna){
 }
 
 int main(int argc, char** argv){
-
-char* dev;
-int channel;
+    char* dev;
+    int channel;
     if (argc == 2){
         dev = *(argv+1);
     } else if(argc == 4 && strcmp(*(argv+1), "-c") == 0){
@@ -42,6 +41,7 @@ int channel;
     int count = 0;
     int beacon_count[100];
     
+    
     char errbuf[PCAP_ERRBUF_SIZE];
 
     pcap_t* pcap = pcap_open_live(dev, BUFSIZ, 1, 1000, errbuf);
@@ -55,6 +55,7 @@ int channel;
         const u_char* packet;
         const u_char* ESSID;
         const u_char* Supported_Rates;
+
         char *essid_c_final = (char *)calloc(30, sizeof(char));
         char *bssid_c = (char *)calloc(20, sizeof(char));
 
@@ -69,9 +70,8 @@ int channel;
         radiotap = (struct Radiotap_header*)packet;
         beacon = (struct Beacon*)(packet+radiotap->length);
 
-        pcap_antenna(radiotap->Antenna_signal);
-
-        if(beacon->type == 0x0080 || beacon->type == 0x0850){
+        if(beacon->type == 0x0080){
+            
             wrls = (struct Wireless*)(packet+radiotap->length+sizeof(struct Beacon));
             ESSID = packet + radiotap->length+sizeof(struct Beacon)+sizeof(struct Wireless);
             s_tag = (struct S_tag*)(packet + radiotap->length+sizeof(struct Beacon)+sizeof(struct Wireless)+wrls->ssid_len);
@@ -80,6 +80,8 @@ int channel;
             
             if(ex[0] == 0x03) ds_tag = (struct DS_tag*)(packet + radiotap->length+sizeof(struct Beacon)+sizeof(struct Wireless)+wrls->ssid_len+sizeof(struct S_tag)+s_tag->s_len);
             else ds_tag = (struct DS_tag*)(packet + radiotap->length+sizeof(struct Beacon)+sizeof(struct Wireless)+wrls->ssid_len+sizeof(struct S_tag)+s_tag->s_len+10);
+            
+            //bssid 생성
             if(ds_tag->current_channel == channel || argc == 2){
                 sprintf(bssid_c,"%02x:%02x:%02x:%02x:%02x:%02x", beacon->BSSID[0], beacon->BSSID[1], beacon->BSSID[2], beacon->BSSID[3], beacon->BSSID[4], beacon->BSSID[5]);
 
@@ -89,6 +91,7 @@ int channel;
                     strcat(essid_c_final, essid_c);
                 }
 
+                //beacon 생성
                 for (int i=0; count-1 >= i; i++){
                     if (strstr(packet_cp[i], bssid_c) != NULL) {
                         cmp = i;
@@ -115,9 +118,7 @@ int channel;
                 free(essid_c_final);
                 free(bssid_c);
             }
-        }
-        
-        else{ //Probe Request일 시
+        }else{ //Probe Request일 시
             packet = packet + radiotap->length;
         }
     }
