@@ -71,7 +71,7 @@ int channel;
 
         pcap_antenna(radiotap->Antenna_signal);
 
-        if(beacon->type == 0x0080){
+        if(beacon->type == 0x0080 || beacon->type == 0x0850){
             wrls = (struct Wireless*)(packet+radiotap->length+sizeof(struct Beacon));
             ESSID = packet + radiotap->length+sizeof(struct Beacon)+sizeof(struct Wireless);
             s_tag = (struct S_tag*)(packet + radiotap->length+sizeof(struct Beacon)+sizeof(struct Wireless)+wrls->ssid_len);
